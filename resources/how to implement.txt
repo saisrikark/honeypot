@@ -1,0 +1,8 @@
+how to scale a honeypot ?
+low interaction honeypots - typically does not include a production system
+				ie ai to predict etc
+			meant largely to scale - easy to deploy
+			only known exploit
+high interaction - has the ai component - generally low response time
+		figures out the exploit
+		goal of capturing the maximum amount of information on the attacker’s techniques
