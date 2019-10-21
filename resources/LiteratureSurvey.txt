@@ -1,2 +1,5 @@
 Paper 1. Design and implementation of honeypot systems based on open-source software
 link:- https://ieeexplore.ieee.org/document/4565077
+
+Paper 2. A survey of honeypot research: Trends and opportunities
+link:- https://ieeexplore.ieee.org/document/7412090
