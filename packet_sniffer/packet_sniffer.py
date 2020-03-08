@@ -1,9 +1,21 @@
 import pyshark
 import threading 
 import time
+import signal
+import sys
 
 capture = pyshark.LiveCapture(interface = 'wlp19s0')
 j = 0
+turn_off_lock = threading.Lock()
+turn_off_flag = False
+
+def signal_handler(sif, frame):
+    print("\n")
+    print("Command Received To Terminate The Program") 
+    turn_off_lock.acquire()
+    global turn_off_flag
+    turn_off_flag = True
+    turn_off_lock.release()
 
 def write_into_file(capture_list,start_index,end_index):
     for i in range(start_index,end_index):
@@ -32,8 +44,10 @@ def write_into_file(capture_list,start_index,end_index):
             fp.close()
 
 def read_packets():
+    
     while(len(capture) == 0):
         time.sleep(5)
+    
     older_count = 0
     while(True):
         new_count = len(capture)
@@ -42,9 +56,22 @@ def read_packets():
             write_into_file(capture,older_count,new_count)
             older_count = new_count
             time.sleep(10)
+        turn_off_lock.acquire()
+        if(turn_off_flag):
+            turn_off_lock.release()
+            break
+        turn_off_lock.release()
+    print("Exiting packet reading")
+
+def sniff_packets():
+    capture.sniff()
 
 t1 = threading.Thread(target=read_packets)
 t1.start()
-capture.sniff()
+t2 = threading.Thread(target=sniff_packets)
+t2.start()
+signal.signal(signal.SIGINT, signal_handler)
+t1.join()
+sys.exit()
 
 
