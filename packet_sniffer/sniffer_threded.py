@@ -11,8 +11,14 @@ def write_into_file(capture_list,start_index,end_index):
             global j 
             packet_log = str(j) + " " + str(capture_list[i].sniff_timestamp) + " "
             j = j + 1
-            packet_log = packet_log + capture_list[i]['eth'].src + " " + capture_list[i]['eth'].dst + " " 
-            packet_log = packet_log + capture_list[i][capture_list[i].transport_layer.lower()].srcport + " " + capture_list[i][capture_list[i].transport_layer.lower()].dstport + " "
+            try:
+                packet_log = packet_log + capture_list[i]['eth'].src + " " + capture_list[i]['eth'].dst + " "
+            except:
+                packet_log = packet_log + "NA" + " " + "NA" + " "
+            try:
+                packet_log = packet_log + capture_list[i][capture_list[i].transport_layer.lower()].srcport + " " + capture_list[i][capture_list[i].transport_layer.lower()].dstport + " "
+            except:
+                packet_log = packet_log + "NA" + " " + "NA" + " "
             if("ip" in capture_list[i]):
                 packet_log = packet_log + capture_list[i]['ip'].src + " " + capture_list[i]['ip'].dst + "\n"
             else:
@@ -22,7 +28,7 @@ def write_into_file(capture_list,start_index,end_index):
             fp.close()
         except:
             fp = open("packets.log","a")
-            fp.write("Failed To Log The Packet")
+            fp.write("Failed To Log The Packet\n")
             fp.close()
 
 def read_packets():
@@ -32,7 +38,7 @@ def read_packets():
     while(True):
         new_count = len(capture)
         if(new_count != older_count):
-            print(str(older_count) + " " + str(new_count))
+            print("Writing packets from " + str(older_count + 1) + " to " + str(new_count))
             write_into_file(capture,older_count,new_count)
             older_count = new_count
             time.sleep(10)
